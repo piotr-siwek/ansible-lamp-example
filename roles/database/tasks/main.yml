@@ -26,6 +26,8 @@
     name: root
     password: "{{ mysql_root_password }}"
     host: localhost
+    login_user: root
+    config_file: /dev/null
     login_unix_socket: /var/run/mysqld/mysqld.sock
     check_implicit_admin: true
     state: present
@@ -36,6 +38,7 @@
     state: present
     login_user: root
     login_password: "{{ mysql_root_password }}"
+    config_file: /dev/null
     login_unix_socket: /var/run/mysqld/mysqld.sock
     check_implicit_admin: true
 
@@ -47,5 +50,6 @@
     state: present
     login_user: root
     login_password: "{{ mysql_root_password }}"
+    config_file: /dev/null
     login_unix_socket: /var/run/mysqld/mysqld.sock
     check_implicit_admin: true
