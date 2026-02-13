@@ -3,3 +3,7 @@
   apt:
     name: "{{ php_packages }}"
     state: present
+
+- name: Enable PHP module in Apache
+  command: a2enmod php7.4
+  notify: Restart Apache

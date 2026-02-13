@@ -1,5 +1,5 @@
 ---
 php_packages:
-  - php
-  - libapache2-mod-php
-  - php-mysql
+  - php7.4
+  - libapache2-mod-php7.4
+  - php7.4-mysql
