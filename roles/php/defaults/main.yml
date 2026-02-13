@@ -1,5 +1,5 @@
 ---
 php_packages:
-  - php8.2
-  - libapache2-mod-php8.2
-  - php8.2-mysql
+  - php8.3
+  - libapache2-mod-php8.3
+  - php8.3-mysql

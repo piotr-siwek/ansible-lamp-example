@@ -6,7 +6,7 @@ This Ansible playbook deploys a LAMP (Linux, Apache, MySQL, PHP) environment on 
 
 - Ansible installed on control machine
 - Target server accessible via SSH
-- Target server should be Ubuntu/Debian based (tested on Ubuntu 20.04)
+- Target server should be Ubuntu/Debian based (tested on Ubuntu 24.04)
 - User with sudo privileges
 
 ## Usage
