@@ -5,5 +5,7 @@
     state: present
 
 - name: Enable PHP module in Apache
-  command: a2enmod php7.4
+  apache2_module:
+    name: php8.2
+    state: present
   notify: Restart Apache
