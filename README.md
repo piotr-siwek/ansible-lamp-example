@@ -11,12 +11,21 @@ This Ansible playbook deploys a LAMP (Linux, Apache, MySQL, PHP) environment on 
 
 ## Usage
 
-1. Edit inventory file (create hosts.ini or use default)
-2. Run the playbook:
+1. **Local testing**: The `hosts.ini` file includes a `[all]` group with `localhost` for local deployment.
+   Run: `ansible-playbook site.yml`
 
-```
-ansible-playbook -i hosts.ini site.yml
-```
+2. **Remote deployment**: Use the `[lamp]` group for production servers.
+   Example `hosts.ini`:
+   ```
+   [all]
+   localhost ansible_connection=local
+   [lamp]
+   your_server_ip ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+   ```
+   Run: `ansible-playbook -i hosts.ini site.yml -l lamp`
+
+   - `[all]`: Default group for all hosts.
+   - `[lamp]`: Group for LAMP servers (you can rename or add more groups as needed).
 
 ## Roles
 
@@ -32,6 +41,7 @@ Variables:
 Installs and configures Apache web server.
 - Installs apache2
 - Starts and enables the service
+- Configures default virtual host
 
 Variables:
 - `apache_port`: Apache listening port
