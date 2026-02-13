@@ -15,9 +15,3 @@
     src: 000-default.conf.j2
     dest: /etc/apache2/sites-available/000-default.conf
   notify: Restart Apache
-
-- name: Enable PHP module in Apache
-  command: a2enmod php
-  args:
-    creates: /etc/apache2/mods-enabled/php.load
-  notify: Restart Apache

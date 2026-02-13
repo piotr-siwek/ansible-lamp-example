@@ -5,7 +5,7 @@
     state: present
 
 - name: Enable PHP module in Apache
-  apache2_module:
+  community.general.apache2_module:
     name: php8.3
     state: present
   notify: Restart Apache
