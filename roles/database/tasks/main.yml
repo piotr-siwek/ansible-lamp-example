@@ -33,8 +33,9 @@
         login_unix_socket: /var/run/mysqld/mysqld.sock
         check_implicit_admin: true
         state: present
-      ignore_errors: yes
       register: mysql_root_set_socket
+      failed_when: false
+      changed_when: mysql_root_set_socket.rc == 0
 
     - name: Set MySQL root password using debian-sys-maint (Ubuntu/Debian - always available)
       shell: |
