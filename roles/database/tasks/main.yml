@@ -4,11 +4,22 @@
     name: "{{ mysql_packages }}"
     state: present
 
+- name: Install PyMySQL dependency for Ansible MySQL modules
+  apt:
+    name: python3-pymysql
+    state: present
+
 - name: Start and enable MySQL
   service:
     name: mysql
     state: started
     enabled: yes
+
+- name: Wait for MySQL socket
+  wait_for:
+    path: /var/run/mysqld/mysqld.sock
+    state: present
+    timeout: 30
 
 - name: Set MySQL root password
   mysql_user:
@@ -16,12 +27,14 @@
     password: "{{ mysql_root_password }}"
     host: localhost
     login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: true
     state: present
 
 - name: Create database
   mysql_db:
     name: "{{ mysql_db_name }}"
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Create database user
   mysql_user:
@@ -29,3 +42,5 @@
     password: "{{ mysql_password }}"
     priv: "{{ mysql_db_name }}.*:ALL"
     state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: true
