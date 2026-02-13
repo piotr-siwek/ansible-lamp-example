@@ -4,9 +4,16 @@
     name: "{{ php_packages }}"
     state: present
 
+- name: Check if PHP module is enabled
+  command: apache2ctl -M 2>/dev/null | grep -q php8_module
+  register: php_module_check
+  changed_when: false
+  failed_when: false
+
 - name: Enable PHP module in Apache
   community.general.apache2_module:
     name: php8.3
     identifier: php8_module
     state: present
+  when: php_module_check.rc != 0
   notify: Restart Apache
