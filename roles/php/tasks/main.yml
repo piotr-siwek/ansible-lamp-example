@@ -1,0 +1,5 @@
+---
+- name: Install PHP and modules
+  apt:
+    name: "{{ php_packages }}"
+    state: present

@@ -1,0 +1,5 @@
+---
+- name: Deploy PHP application
+  template:
+    src: index.php.j2
+    dest: "{{ app_dir }}/index.php"

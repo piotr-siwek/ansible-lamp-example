@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - base
+    - web
+    - database
+    - php
+    - app
