@@ -23,7 +23,7 @@
 
 - name: Set MySQL root password
   block:
-    - name: Set MySQL root password (socket auth)
+    - name: Set MySQL root password (socket auth - fresh install)
       community.mysql.mysql_user:
         name: root
         password: "{{ mysql_root_password }}"
@@ -33,21 +33,41 @@
         login_unix_socket: /var/run/mysqld/mysqld.sock
         check_implicit_admin: true
         state: present
+      ignore_errors: yes
+      register: mysql_root_set_socket
+
+    - name: Set MySQL root password using debian-sys-maint (Ubuntu/Debian - always available)
+      shell: |
+        mysql --defaults-file=/etc/mysql/debian.cnf <<EOF
+        ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}';
+        FLUSH PRIVILEGES;
+        EOF
+      when: mysql_root_set_socket.failed | default(false)
+      no_log: true
+      register: mysql_root_set_debian
+      ignore_errors: yes
+
   rescue:
-    - name: Set MySQL root password (password auth)
+    - name: Set MySQL root password (using Ansible module with current password)
       community.mysql.mysql_user:
         name: root
         password: "{{ mysql_root_password }}"
         host: localhost
         login_user: root
-        login_password: "{{ mysql_root_current_password | default('') }}"
+        login_password: "{{ mysql_root_current_password }}"
         config_file: /dev/null
         state: present
+      when: mysql_root_current_password | length > 0
+      ignore_errors: yes
+      register: mysql_root_set_password
 
-    - name: Fail if current MySQL root password is unknown
+    - name: Fail if cannot set MySQL root password
       fail:
-        msg: "Cannot set MySQL root password: socket auth failed and mysql_root_current_password is empty. Set mysql_root_current_password to the CURRENT root password on this VM (or reset root password in MySQL) and re-run."
-      when: (mysql_root_current_password | default('')) | length == 0
+        msg: "Cannot set MySQL root password. All methods failed. If MySQL already has a password, set mysql_root_current_password in roles/database/defaults/main.yml to the current root password."
+      when: >
+        (mysql_root_set_socket.failed | default(true)) and
+        (mysql_root_set_debian.failed | default(true)) and
+        (mysql_root_set_password.failed | default(true))
 
 - name: Create database
   community.mysql.mysql_db:
