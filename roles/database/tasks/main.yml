@@ -40,10 +40,14 @@
         password: "{{ mysql_root_password }}"
         host: localhost
         login_user: root
-        login_password: "{{ mysql_root_password }}"
+        login_password: "{{ mysql_root_current_password | default('') }}"
         config_file: /dev/null
-        login_unix_socket: /var/run/mysqld/mysqld.sock
         state: present
+
+    - name: Fail if current MySQL root password is unknown
+      fail:
+        msg: "Cannot set MySQL root password: socket auth failed and mysql_root_current_password is empty. Set mysql_root_current_password to the CURRENT root password on this VM (or reset root password in MySQL) and re-run."
+      when: (mysql_root_current_password | default('')) | length == 0
 
 - name: Create database
   community.mysql.mysql_db:
@@ -52,7 +56,6 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
     config_file: /dev/null
-    login_unix_socket: /var/run/mysqld/mysqld.sock
     check_implicit_admin: true
 
 - name: Create database user
@@ -64,5 +67,4 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
     config_file: /dev/null
-    login_unix_socket: /var/run/mysqld/mysqld.sock
     check_implicit_admin: true

@@ -15,3 +15,12 @@
     src: 000-default.conf.j2
     dest: /etc/apache2/sites-available/000-default.conf
   notify: Restart Apache
+
+- name: Enable Apache default site
+  command: a2ensite 000-default.conf
+  register: a2ensite_result
+  args:
+    creates: /etc/apache2/sites-enabled/000-default.conf
+  changed_when: "'already enabled' not in a2ensite_result.stderr | default('')"
+  failed_when: false
+  notify: Restart Apache
