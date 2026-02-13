@@ -22,15 +22,28 @@
     timeout: 30
 
 - name: Set MySQL root password
-  community.mysql.mysql_user:
-    name: root
-    password: "{{ mysql_root_password }}"
-    host: localhost
-    login_user: root
-    config_file: /dev/null
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    check_implicit_admin: true
-    state: present
+  block:
+    - name: Set MySQL root password (socket auth)
+      community.mysql.mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        host: localhost
+        login_user: root
+        config_file: /dev/null
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        check_implicit_admin: true
+        state: present
+  rescue:
+    - name: Set MySQL root password (password auth)
+      community.mysql.mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        host: localhost
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        config_file: /dev/null
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
 
 - name: Create database
   community.mysql.mysql_db:
